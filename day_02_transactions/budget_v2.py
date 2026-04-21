@@ -63,7 +63,7 @@ runway_miesiace = 0
 
 while saldo > 0:
     saldo -= msc_burn
-    saldo += 1
+    runway_miesiace += 1
 
 print(f"""
 💰 Saldo po zobowiązaniach: {saldo_po - zaplanowane:.2f} zł
