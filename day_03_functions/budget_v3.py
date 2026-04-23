@@ -4,8 +4,8 @@ from typing import Literal
 
 saldo: float = 3311.0
 dni_danych: int = 3
-line = "=" * 40
-line_thin = "-" * 40
+LINE = "=" * 40
+LINE_THIN = "-" * 40
 
 transakcje: list[dict] = [
     {"data": "2026-04-19", "sklep": "Biedronka", "kwota": 87.50,  "kategoria": "jedzenie"},
@@ -13,7 +13,6 @@ transakcje: list[dict] = [
     {"data": "2026-04-20", "sklep": "Lidl",      "kwota": 134.20, "kategoria": "jedzenie"},
     {"data": "2026-04-20", "sklep": "Fryzjer",   "kwota": 60.00,  "kategoria": "styl"},
     {"data": "2026-04-20", "sklep": "Kreatyna",  "kwota": 45.00,  "kategoria": "zdrowie"},
-    {"data": "2026-04-21", "sklep": "Kebab",     "kwota": 22.00,  "kategoria": "jedzenie"},
     {"data": "2026-04-21", "sklep": "Kebab",     "kwota": 22.00,  "kategoria": "jedzenie"},
 ]
 
@@ -48,7 +47,7 @@ def calculate_runway(balance: float, msc_burn: float, spent: float = 0.0, obliga
     
     mode='from_start': ile miesięcy wytrzyma się bez uwzględnienia już-poniesionych wydatków
     mode='from_current': ile jeszcze wytrzyma (balance to saldo PO wydatkach)
-    mode='from_obligaeted': ile jeszcze wytrzyma (balance to saldo PO wydatkach i PO zobowiązaniach)
+    mode='from_obligated': ile jeszcze wytrzyma (balance to saldo PO wydatkach i PO zobowiązaniach)
     """
     runway_msc: int = 0
     balance_current: float = balance - spent
@@ -86,9 +85,9 @@ def format_planned_line(p: dict) -> str:
 def print_report(balance: float, transactions: list[dict], planned: list[dict]) -> None:
     """Orchestrator — wywołuje funkcje wyżej i printuje raport. Impure."""
    
-    print(f"""{line}
+    print(f"""{LINE}
 💰 BUDGET v3 — breakdown
-{line}
+{LINE}
 Saldo startowe: {balance:.2f} zł\n
 📋 Transakcje ({len(transactions)}):""")
  
@@ -96,7 +95,7 @@ Saldo startowe: {balance:.2f} zł\n
         transaction = format_transaction_line(item, i)
         print(transaction)
 
-    print(f"""{line_thin}\n📊 Podsumowanie kategorii:""")
+    print(f"""{LINE_THIN}\n📊 Podsumowanie kategorii:""")
     
     summed_categories = sum_by_category(transactions)
     
@@ -108,7 +107,7 @@ Saldo startowe: {balance:.2f} zł\n
     print(f"""
 💸 {"Łącznie wydane:":<20}{spent:.2f} zł
 💰 {"Saldo po wydatkach: ":<20}{balance-spent:.2f} zł
-{line_thin}""")
+{LINE_THIN}""")
 
     zaplanowane = total_amount(planned)
 
@@ -120,14 +119,14 @@ Saldo startowe: {balance:.2f} zł\n
 
     print(f"""
 💰 Saldo po zobowiązaniach: {balance - spent - zaplanowane:.2f} zł
-{line_thin}""")
+{LINE_THIN}""")
 
     avg: float = spent / dni_danych
     msc_burn: float = avg * 30
 
-    b_start = calculate_runway(balance=saldo, msc_burn=msc_burn, mode="from_start")
-    b_spend = calculate_runway(balance=saldo, msc_burn=msc_burn, spent=spent, mode="from_current")
-    b_obligated = calculate_runway(balance=saldo, msc_burn=msc_burn, spent=spent, obligated=zaplanowane, mode="from_obligated")
+    b_start = calculate_runway(balance=balance, msc_burn=msc_burn, mode="from_start")
+    b_spend = calculate_runway(balance=balance, msc_burn=msc_burn, spent=spent, mode="from_current")
+    b_obligated = calculate_runway(balance=balance, msc_burn=msc_burn, spent=spent, obligated=zaplanowane, mode="from_obligated")
 
     print(f"""🔮 Runway (3 scenariusze):
   Od salda startowego:        {b_start} mies
