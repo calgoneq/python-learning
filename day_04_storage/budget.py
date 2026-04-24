@@ -5,6 +5,7 @@ HERE = Path(__file__).parent
 TRANSACTIONS_FILE = HERE / "transactions.json"
 PLANNED_FILE = HERE / "planned.json"
 
+DNI_DANYCH: int = 3
 LINE = "=" * 40
 LINE_THIN = "-" * 40
 SALDO: float = 3311.0
@@ -51,7 +52,7 @@ def print_report(balance: float, transactions: list[dict], planned: list[dict]) 
     """Orchestrator — wywołuje funkcje wyżej i printuje raport. Impure."""
    
     print(f"""{LINE}
-💰 BUDGET v3 — breakdown
+💰 BUDGET v4 — breakdown
 {LINE}
 Saldo startowe: {balance:.2f} zł\n
 📋 Transakcje ({len(transactions)}):""")
@@ -86,7 +87,7 @@ Saldo startowe: {balance:.2f} zł\n
 💰 Saldo po zobowiązaniach: {balance - spent - zaplanowane:.2f} zł
 {LINE_THIN}""")
 
-    avg: float = spent / 3
+    avg: float = spent / DNI_DANYCH
     monthly_burn: float = avg * 30
     b_start     = calculate_runway(balance, monthly_burn)
     b_spend     = calculate_runway(balance - spent, monthly_burn)

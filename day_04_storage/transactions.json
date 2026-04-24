@@ -34,11 +34,5 @@
     "sklep": "Kebab",
     "kwota": 22.0,
     "kategoria": "jedzenie"
-  },
-  {
-    "data": "2026-04-24",
-    "sklep": "TEST",
-    "kwota": 100.0,
-    "kategoria": "TESTY"
   }
 ]

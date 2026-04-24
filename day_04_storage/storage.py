@@ -13,7 +13,6 @@ def load_json(path: Path) -> list[dict]:
     Raises:
         json.JSONDecodeError: jeśli plik istnieje ale jest popsuty.
     """
-    ...
 
     try: 
         with open(path, "r", encoding="utf-8") as f:
@@ -25,7 +24,7 @@ def load_json(path: Path) -> list[dict]:
         return []
 
     except json.JSONDecodeError:
-        print(f"ERROR: {path} corrupted, new list creted!")
+        print(f"ERROR: {path} corrupted, new list created!")
         return []
 
 
@@ -47,6 +46,19 @@ def append_transaction(transaction: dict, path: Path) -> None:
     save_json(data, path)
 
 
+def delete_transaction(transaction: dict, path: Path) -> None:
+    """
+    Usuwa JEDNĄ transakcję z istniejącego pliku.
+    """
+
+    data = load_json(path)
+    try:
+        data.remove(transaction)
+        save_json(data, path)
+    except ValueError:
+        print(f"ERROR: {transaction} not found, skipping.")
+
+
 def backup_json(source: Path, backup_dir: Path) -> Path:
     """
     Kopiuje source do backup_dir/source-YYYYMMDD-HHMMSS.json.
@@ -54,6 +66,6 @@ def backup_json(source: Path, backup_dir: Path) -> Path:
     """
 
     data = load_json(source)
-    backup_file = HERE / f"backup_dir/source-{datetime.today().strftime("%Y%m%d-%H%M%S")}.json"
+    backup_file = f"{backup_dir}/source-{datetime.today().strftime("%Y%m%d-%H%M%S")}.json"
     save_json(data, backup_file)
-    return backup_dir
+    return backup_file
