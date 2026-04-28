@@ -100,7 +100,7 @@ def test_calculate_runway_edge_case_month_equals_zero(balance, monthly_burn, exp
     with pytest.raises(ValueError):
         calculate_runway(balance, monthly_burn)
 
-def format_transaction_line_returns_correct_formating_string():
+def test_format_transaction_line_returns_correct_formating_string():
     one_record = {
     "data": "2026-04-19",
     "sklep": "Biedronka",
@@ -108,6 +108,6 @@ def format_transaction_line_returns_correct_formating_string():
     "kategoria": "jedzenie"
     }
 
-    result = format_transaction_line(t=one_record, i=1)
+    result = format_transaction_line(t=one_record, index=1)
 
-    assert one_record["data"] and one_record["sklep "] and str(one_record["kwota"]) and one_record["kategoria"] in result
+    assert one_record["data"] and one_record["sklep"] and str(one_record["kwota"]) and one_record["kategoria"] in result
