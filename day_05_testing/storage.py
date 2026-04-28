@@ -66,6 +66,7 @@ def backup_json(source: Path, backup_dir: Path) -> Path:
     """
 
     data = load_json(source)
-    backup_file = f"{backup_dir}/source-{datetime.today().strftime("%Y%m%d-%H%M%S")}.json"
+    timestamp = datetime.today().strftime("%Y%m%d-%H%M%S")
+    backup_file = backup_dir / f"source-{timestamp}.json"
     save_json(data, backup_file)
     return backup_file
