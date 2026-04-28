@@ -17,7 +17,7 @@ def sum_by_category(transactions: list[dict]) -> dict[str, float]:
     for item in transactions:
         kat = item.get('kategoria', "BRAK")
         kategorie_suma[kat] = kategorie_suma.get(kat, 0.0) + item['kwota']
-    
+
     return kategorie_suma
 
 def total_amount(items: list[dict], key: str = "kwota") -> float:
@@ -30,9 +30,12 @@ def total_amount(items: list[dict], key: str = "kwota") -> float:
 def calculate_runway(balance: float, monthly_burn: float) -> int:
     """Ile miesięcy wytrzyma `balance` przy `monthly_burn`."""
     months = 0
+    if monthly_burn <= 0: raise ValueError
+
     while balance > 0:
         balance -= monthly_burn
         months += 1
+        
     return months
 
 def format_transaction_line(t: dict, index: int) -> str:
