@@ -44,9 +44,9 @@ def test_cmd_add_adds_transaction_to_file(backup_transaction_file, monkeypatch):
     main()
     dane = load_json(TRANSACTIONS_FILE)
 
-    assert "TEST" in dane[-1]
+    assert "TEST" in dane[-1]['sklep']
 
-def test_cmd_add_adds_transaction_to_file(backup_transaction_file, monkeypatch):
+def test_cmd_add_with_negative_amount_exits(backup_transaction_file, monkeypatch):
     with pytest.raises(SystemExit):
         monkeypatch.setattr("sys.argv", ["budget.py", "add", "--sklep", "TEST", "--kwota", "-10.0", "--kategoria", "test"])
         main()  
@@ -96,5 +96,7 @@ def test_parameter_help_prints_usage_and_ends_with_exit_code_0(capsys, monkeypat
 def test_no_command_returns_error_and_exits(monkeypatch):
     monkeypatch.setattr("sys.argv", ["budget.py"])
     
-    with pytest.raises(SystemExit):
+    with pytest.raises(SystemExit) as e:
         main()
+        
+    assert e.value.code != 0

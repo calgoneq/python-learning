@@ -143,7 +143,7 @@ def cmd_delete(args) -> None:
 
 def cmd_backup(args) -> None:
     '''Tworzy backup danych transakcji'''
-    dest_path: str = args.dest
+    dest_path = args.dest
 
     if not dest_path.exists():
         print(f"WARNING: default folder nie istniał, stworzono nowy w {dest_path}")
@@ -156,8 +156,8 @@ def cmd_categories(args) -> None:
     '''Tworzy zestawienie wydatków dla każdej kategori'''
     transactions = load_json(TRANSACTIONS_FILE)
     data = sum_by_category(transactions)
-    for item, key in data.items():
-        print(f"{item}: {key} zł")
+    for category, sum in data.items():
+        print(f"{category}: {sum:.2f} zł")
 
 HANDLERS = {
     "report": cmd_report,
@@ -171,26 +171,21 @@ def main():
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # Command 1: report
-    hello_parser = subparsers.add_parser("report", help="Sends report")
+    report_parser = subparsers.add_parser("report", help="Sends report")
 
-    # Command 2: add
     add_parser = subparsers.add_parser("add", help="Adds transaction")
     add_parser.add_argument("--sklep", type=str, required=True)
     add_parser.add_argument("--kwota", type=float, required=True)
     add_parser.add_argument("--kategoria", type=str, required=True)
     add_parser.add_argument("--data", type=str, default=datetime.today().strftime("%Y-%m-%d"))
    
-    # Command 3: delete
     del_parser = subparsers.add_parser("delete", help="Remove transaction")
     del_parser.add_argument("--index", type=int, required=True)
 
-    # Command 4: backup
     backup_parser = subparsers.add_parser("backup", help="Create backup folder")
-    backup_parser.add_argument("--dest", type=str, default= HERE / "backup_dir")
+    backup_parser.add_argument("--dest", type=Path, default= HERE / "backup_dir")
 
-    # Command 5: categories
-    backup_parser = subparsers.add_parser("categories", help="Prints sums for each category")
+    category_parser = subparsers.add_parser("categories", help="Prints sums for each category")
 
     args = parser.parse_args()
 
