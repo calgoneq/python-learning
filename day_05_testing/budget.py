@@ -30,7 +30,9 @@ def total_amount(items: list[dict], key: str = "kwota") -> float:
 def calculate_runway(balance: float, monthly_burn: float) -> int:
     """Ile miesięcy wytrzyma `balance` przy `monthly_burn`."""
     months = 0
-    if monthly_burn <= 0: raise ValueError
+    
+    if monthly_burn <= 0: 
+        raise ValueError("monthly_burn musi być dodatni!")
 
     while balance > 0:
         balance -= monthly_burn

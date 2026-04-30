@@ -1,5 +1,3 @@
-import json
-
 import pytest
 from storage import save_json, load_json, append_transaction, delete_transaction, backup_json
 
@@ -19,7 +17,7 @@ def test_load_json_not_existing_file_returns_empty_list(tmp_path):
 
     assert result == []
 
-def test_load_json_empty_json_returns_empty_list(tmp_path):
+def test_load_json_corrupted_file_returns_empty_list(tmp_path):
     file = (tmp_path / "bad.json")
     file.write_text("to nie jest JSON", encoding="utf-8")
 
@@ -115,7 +113,7 @@ def test_delete_transaction_on_missing_entry_does_not_crash(tmp_path):
     }]
 
     save_json(data, file)
-    delete_transaction({"does not exist"}, file)
+    delete_transaction({"data": "1999-01-01", "sklep": "FAKE", "kwota": 999.0, "kategoria": "fake"}, file)
 
     result = load_json(file)
 

@@ -18,7 +18,7 @@ def test_sum_by_category_one_transaction_returns_dict_with_one_entry():
 
     result = sum_by_category(one_record)
 
-    assert result == {one_record[0]["kategoria"]: one_record[0]["kwota"]}
+    assert result == {"jedzenie": 87.5}
 
 def test_sum_by_category_sum_in_category_returns_dict_with_summed_categories():
     data = [{
@@ -59,12 +59,12 @@ def test_sum_by_category_transaction_without_key_goes_to_empty_category():
 
     result = sum_by_category(one_record)
 
-    assert result == {one_record[0].get("kategoria", "BRAK"): one_record[0]["kwota"]}
+    assert result == {"BRAK": 87.5}
 
 def test_total_amount_for_empty_list_returns_zero():
-    empty_listy = []
+    empty_list = []
 
-    result = total_amount(empty_listy)
+    result = total_amount(empty_list)
 
     assert result == 0
 
@@ -97,7 +97,7 @@ def test_calculate_runway_happy_path(balance, monthly_burn, expected):
 ])
 
 def test_calculate_runway_edge_case_month_equals_zero(balance, monthly_burn, expected):
-    with pytest.raises(ValueError):
+    with pytest.raises(expected):
         calculate_runway(balance, monthly_burn)
 
 def test_format_transaction_line_returns_correct_formating_string():
@@ -110,4 +110,7 @@ def test_format_transaction_line_returns_correct_formating_string():
 
     result = format_transaction_line(t=one_record, index=1)
 
-    assert one_record["data"] and one_record["sklep"] and str(one_record["kwota"]) and one_record["kategoria"] in result
+    assert one_record["data"] in result
+    assert one_record["sklep"] in result
+    assert f"{one_record['kwota']:.2f}" in result
+    assert one_record["kategoria"] in result
