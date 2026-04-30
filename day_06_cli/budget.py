@@ -1,7 +1,8 @@
 import argparse
 from datetime import datetime
-
+import sys
 from pathlib import Path
+
 from storage import load_json, backup_json, append_transaction, delete_transaction
 
 HERE = Path(__file__).parent
@@ -135,7 +136,7 @@ def cmd_delete(args) -> None:
 
     if internal_index not in range(0, len(transactions)):
         print(f"Błąd: nie ma transakcji o indeksie {internal_index}. Lista ma {len(transactions)} pozycji.")
-        return
+        sys.exit(1)
     
     print(f"Usunięto pozycję {args.index}: {transactions[internal_index]['sklep']} | {transactions[internal_index]['kwota']:.2f} zł")
     delete_transaction(transactions[internal_index], TRANSACTIONS_FILE)
@@ -143,14 +144,27 @@ def cmd_delete(args) -> None:
 def cmd_backup(args) -> None:
     '''Tworzy backup danych transakcji'''
     dest_path: str = args.dest
+
+    if not dest_path.exists():
+        print(f"WARNING: default folder nie istniał, stworzono nowy w {dest_path}")
+        dest_path.mkdir()
+
     backup_json(TRANSACTIONS_FILE, dest_path)
     print(f"Backup utworzony: {dest_path}")
+
+def cmd_categories(args) -> None:
+    '''Tworzy zestawienie wydatków dla każdej kategori'''
+    transactions = load_json(TRANSACTIONS_FILE)
+    data = sum_by_category(transactions)
+    for item, key in data.items():
+        print(f"{item}: {key} zł")
 
 HANDLERS = {
     "report": cmd_report,
     "add": cmd_add,
     "delete": cmd_delete,
-    "backup": cmd_backup
+    "backup": cmd_backup,
+    "categories": cmd_categories
 }
 
 def main():
@@ -168,12 +182,15 @@ def main():
     add_parser.add_argument("--data", type=str, default=datetime.today().strftime("%Y-%m-%d"))
    
     # Command 3: delete
-    del_parser = subparsers.add_parser("delete", help="Adds transaction")
+    del_parser = subparsers.add_parser("delete", help="Remove transaction")
     del_parser.add_argument("--index", type=int, required=True)
 
     # Command 4: backup
-    backup_parser = subparsers.add_parser("backup", help="Adds transaction")
+    backup_parser = subparsers.add_parser("backup", help="Create backup folder")
     backup_parser.add_argument("--dest", type=str, default= HERE / "backup_dir")
+
+    # Command 5: categories
+    backup_parser = subparsers.add_parser("categories", help="Prints sums for each category")
 
     args = parser.parse_args()
 

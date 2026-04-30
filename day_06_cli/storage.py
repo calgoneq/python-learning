@@ -67,6 +67,9 @@ def backup_json(source: Path, backup_dir: Path) -> Path:
 
     data = load_json(source)
     timestamp = datetime.today().strftime("%Y%m%d-%H%M%S")
-    backup_file = backup_dir / f"source-{timestamp}.json"
+    if backup_dir.exists():
+        backup_file = backup_dir / f"source-{timestamp}.json"
+    else:
+        raise FileNotFoundError("ERROR: Folder backup nie istnieje!")
     save_json(data, backup_file)
     return backup_file
