@@ -3,7 +3,7 @@ from storage import save_json, load_json, append_transaction, delete_transaction
 
 def test_save_json_saves_list_load_json_reads_list(tmp_path):
     file = tmp_path / "test.json"
-    data = [{"test_data": "test_data_1"}, {"test_data": "test_data_2"}]
+    data: list[dict] = [{"test_data": "test_data_1"}, {"test_data": "test_data_2"}]
 
     save_json(data, file)
     result = load_json(file)
@@ -28,7 +28,7 @@ def test_load_json_corrupted_file_returns_empty_list(tmp_path):
 def test_append_transaction_adds_entry(tmp_path):
     file = tmp_path / "temp_data.json"
 
-    data = [{
+    data: list[dict] = [{
         "data": "2026-04-19",
         "sklep": "Żabka",
         "kwota": 12.0,
@@ -41,7 +41,7 @@ def test_append_transaction_adds_entry(tmp_path):
         "kategoria": "jedzenie"
     }]
 
-    new_entry = {"data": "2026-04-20",
+    new_entry: dict = {"data": "2026-04-20",
         "sklep": "Lidl",
         "kwota": 134.2,
         "kategoria": "jedzenie"}
@@ -56,7 +56,7 @@ def test_append_transaction_adds_entry(tmp_path):
 def test_append_transaction_not_existing_file_creates_new_file_with_one_entry(tmp_path):
     file = tmp_path / "not_existing.json"
 
-    new_entry = {"data": "2026-04-20",
+    new_entry: dict = {"data": "2026-04-20",
         "sklep": "Lidl",
         "kwota": 134.2,
         "kategoria": "jedzenie"}
@@ -69,7 +69,7 @@ def test_append_transaction_not_existing_file_creates_new_file_with_one_entry(tm
 def test_delete_transaction_removes_existing_entry(tmp_path):
     file = tmp_path / "temp_data.json"
 
-    data = [{
+    data: list[dict] = [{
         "data": "2026-04-19",
         "sklep": "Żabka",
         "kwota": 12.0,
@@ -99,7 +99,7 @@ def test_delete_transaction_removes_existing_entry(tmp_path):
 def test_delete_transaction_on_missing_entry_does_not_crash(tmp_path):
     file = tmp_path / "temp_data.json"
 
-    data = [{
+    data: list[dict] = [{
         "data": "2026-04-19",
         "sklep": "Żabka",
         "kwota": 12.0,

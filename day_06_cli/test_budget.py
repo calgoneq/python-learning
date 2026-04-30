@@ -2,14 +2,14 @@ import pytest
 from budget import sum_by_category, total_amount, calculate_runway, format_transaction_line
 
 def test_sum_by_category_empty_list_returns_empty_dict():
-    empty_list = []
+    empty_list: list = []
    
     result = sum_by_category(empty_list)
 
     assert result == {} 
 
 def test_sum_by_category_one_transaction_returns_dict_with_one_entry():
-    one_record = [{
+    one_record: list[dict] = [{
     "data": "2026-04-19",
     "sklep": "Biedronka",
     "kwota": 87.5,
@@ -21,7 +21,7 @@ def test_sum_by_category_one_transaction_returns_dict_with_one_entry():
     assert result == {"jedzenie": 87.5}
 
 def test_sum_by_category_sum_in_category_returns_dict_with_summed_categories():
-    data = [{
+    data: list[dict] = [{
         "data": "2026-04-19",
         "sklep": "H&M",
         "kwota": 87.5,
@@ -51,7 +51,7 @@ def test_sum_by_category_sum_in_category_returns_dict_with_summed_categories():
     assert result == {"jedzenie": 146.2, "styl": 175}
 
 def test_sum_by_category_transaction_without_key_goes_to_empty_category():
-    one_record = [{
+    one_record: list[dict] = [{
     "data": "2026-04-19",
     "sklep": "Biedronka",
     "kwota": 87.5,
@@ -62,21 +62,21 @@ def test_sum_by_category_transaction_without_key_goes_to_empty_category():
     assert result == {"BRAK": 87.5}
 
 def test_total_amount_for_empty_list_returns_zero():
-    empty_list = []
+    empty_list: list = []
 
     result = total_amount(empty_list)
 
     assert result == 0
 
 def test_total_amount_for_list_and_default_key_kwota():
-    default_list_dict = [{"kwota": 10.0}, {"kwota": 10.0}, {"kwota": 10.0}]
+    default_list_dict: list[dict] = [{"kwota": 10.0}, {"kwota": 10.0}, {"kwota": 10.0}]
 
     result = total_amount(default_list_dict)
 
     assert result == 30.0
 
 def test_total_amount_with_different_key():
-    default_list_dict = [{"deadline": "test"}, {"deadline": "test"}, {"deadline": "test"}]
+    default_list_dict: list[dict] = [{"deadline": "test"}, {"deadline": "test"}, {"deadline": "test"}]
 
     with pytest.raises(TypeError):
         total_amount(default_list_dict, key="deadline")
@@ -101,7 +101,7 @@ def test_calculate_runway_edge_case_month_equals_zero(balance, monthly_burn, exp
         calculate_runway(balance, monthly_burn)
 
 def test_format_transaction_line_returns_correct_formating_string():
-    one_record = {
+    one_record: dict = {
     "data": "2026-04-19",
     "sklep": "Biedronka",
     "kwota": 87.5,

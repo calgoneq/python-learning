@@ -33,7 +33,7 @@ def total_amount(items: list[dict], key: str = "kwota") -> float:
 
 def calculate_runway(balance: float, monthly_burn: float) -> int:
     """Ile miesięcy wytrzyma `balance` przy `monthly_burn`."""
-    months = 0
+    months: int = 0
     
     if monthly_burn <= 0: 
         raise ValueError("monthly_burn musi być dodatni!")
@@ -132,7 +132,7 @@ def cmd_delete(args) -> None:
         print("Brak transakcji do usunięcia.")
         return
 
-    internal_index = args.index - 1
+    internal_index: int = args.index - 1
 
     if internal_index not in range(0, len(transactions)):
         print(f"Błąd: nie ma transakcji o indeksie {internal_index}. Lista ma {len(transactions)} pozycji.")
