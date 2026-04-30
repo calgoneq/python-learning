@@ -1,5 +1,8 @@
+import argparse
+from datetime import datetime
+
 from pathlib import Path
-from storage import load_json, backup_json
+from storage import load_json, backup_json, append_transaction, delete_transaction
 
 HERE = Path(__file__).parent
 TRANSACTIONS_FILE = HERE / "transactions.json"
@@ -52,7 +55,6 @@ def format_planned_line(p: dict) -> str:
 
     return planned
 
-
 def print_report(balance: float, transactions: list[dict], planned: list[dict]) -> None:
     """Orchestrator — wywołuje funkcje wyżej i printuje raport. Impure."""
    
@@ -103,7 +105,83 @@ Saldo startowe: {balance:.2f} zł\n
   Od salda po wydatkach:      {b_spend} mies
   Od salda po zobowiązaniach: {b_obligated} mies""")
 
-if __name__ == "__main__":
+def cmd_report(args) -> None:
+    '''Loads transaction and planned files and prints report. Impure'''
     transactions = load_json(TRANSACTIONS_FILE)
     planned = load_json(PLANNED_FILE)
     print_report(SALDO, transactions, planned)
+
+def cmd_add(args) -> None:
+    '''Adds new transaction record. Impure'''
+
+    transaction: dict = {
+        "sklep": args.sklep,
+        "kwota": args.kwota,
+        "kategoria": args.kategoria,
+        "data": args.data
+    }
+
+    append_transaction(transaction, TRANSACTIONS_FILE)
+    print(f"Dodano: {transaction['sklep']} | {transaction['kwota']:.2f} zł | {transaction['kategoria']}")
+
+def cmd_delete(args) -> None:
+    '''Removes specified transaction record'''
+    transactions = load_json(TRANSACTIONS_FILE)
+    if len(transactions) == 0:
+        print("Brak transakcji do usunięcia.")
+        return
+
+    internal_index = args.index - 1
+
+    if internal_index not in range(0, len(transactions)):
+        print(f"Błąd: nie ma transakcji o indeksie {internal_index}. Lista ma {len(transactions)} pozycji.")
+        return
+    
+    print(f"Usunięto pozycję {args.index}: {transactions[internal_index]['sklep']} | {transactions[internal_index]['kwota']:.2f} zł")
+    delete_transaction(transactions[internal_index], TRANSACTIONS_FILE)
+
+def cmd_backup(args) -> None:
+    '''Tworzy backup danych transakcji'''
+    dest_path: str = args.dest
+    backup_json(TRANSACTIONS_FILE, dest_path)
+    print(f"Backup utworzony: {dest_path}")
+
+HANDLERS = {
+    "report": cmd_report,
+    "add": cmd_add,
+    "delete": cmd_delete,
+    "backup": cmd_backup
+}
+
+def main():
+    parser = argparse.ArgumentParser()
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Command 1: report
+    hello_parser = subparsers.add_parser("report", help="Sends report")
+
+    # Command 2: add
+    add_parser = subparsers.add_parser("add", help="Adds transaction")
+    add_parser.add_argument("--sklep", type=str, required=True)
+    add_parser.add_argument("--kwota", type=float, required=True)
+    add_parser.add_argument("--kategoria", type=str, required=True)
+    add_parser.add_argument("--data", type=str, default=datetime.today().strftime("%Y-%m-%d"))
+   
+    # Command 3: delete
+    del_parser = subparsers.add_parser("delete", help="Adds transaction")
+    del_parser.add_argument("--index", type=int, required=True)
+
+    # Command 4: backup
+    backup_parser = subparsers.add_parser("backup", help="Adds transaction")
+    backup_parser.add_argument("--dest", type=str, default= HERE / "backup_dir")
+
+    args = parser.parse_args()
+
+    if args.command == "add" and args.kwota <= 0:
+        parser.error(f"Kwota musi być większa lub równa zero")
+    
+    handler = HANDLERS[args.command]
+    handler(args)
+
+if __name__ == "__main__":
+    main()

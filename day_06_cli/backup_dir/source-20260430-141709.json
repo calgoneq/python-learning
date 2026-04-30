@@ -1,0 +1,80 @@
+[
+  {
+    "data": "2026-04-19",
+    "sklep": "Biedronka",
+    "kwota": 87.5,
+    "kategoria": "jedzenie"
+  },
+  {
+    "data": "2026-04-19",
+    "sklep": "Żabka",
+    "kwota": 12.0,
+    "kategoria": "jedzenie"
+  },
+  {
+    "data": "2026-04-20",
+    "sklep": "Lidl",
+    "kwota": 134.2,
+    "kategoria": "jedzenie"
+  },
+  {
+    "data": "2026-04-20",
+    "sklep": "Fryzjer",
+    "kwota": 60.0,
+    "kategoria": "styl"
+  },
+  {
+    "data": "2026-04-20",
+    "sklep": "Kreatyna",
+    "kwota": 45.0,
+    "kategoria": "zdrowie"
+  },
+  {
+    "data": "2026-04-21",
+    "sklep": "Kebab",
+    "kwota": 22.0,
+    "kategoria": "jedzenie"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  },
+  {
+    "sklep": "Test",
+    "kwota": 99.99,
+    "kategoria": "testy",
+    "data": "2026-04-30"
+  }
+]
