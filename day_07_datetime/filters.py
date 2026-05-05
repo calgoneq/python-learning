@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-def parse_date(data: str) -> datetime.date:
+def parse_date(data: str) -> date:
     '''Converts string into a datetime.date object.'''
     try:
         d = datetime.strptime(data, "%Y-%m-%d").date()
@@ -28,14 +28,16 @@ def filter_by_date_range(transactions: list[dict], od: str = None , do: str = No
     result: list = []
 
     for t in transactions:
-        d = parse_date(t.get("data", ""))
-        if d is None:
+
+        try:
+            d = parse_date(t.get("data", ""))
+        except ValueError:
             continue
-        else:
-            if date_od and d < date_od:
-                continue
-            if date_do and d > date_do:
-                continue
+
+        if date_od is not None and d < date_od:
+            continue
+        if date_do is not None and d > date_do:
+            continue
 
         result.append(t)
             

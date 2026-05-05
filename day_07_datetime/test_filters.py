@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime
+from datetime import datetime, date as d
 
 from filters import parse_date, filter_by_date_range, sort_transaction_by_date
 
@@ -7,7 +7,7 @@ def test_parse_date_returns_datetime_date_object():
     date: str = "2026-05-04"
 
     result = parse_date(date)
-    assert datetime.strptime(date, "%Y-%m-%d").date() == result
+    assert result == d(2026, 5, 4)
 
 def test_parse_date_raises_value_error_for_wrong_data():
     date: str = "abc"

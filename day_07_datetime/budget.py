@@ -194,8 +194,8 @@ def main():
 
     args = parser.parse_args()
 
-    if args.command == "add" and args.kwota <= 0:
-        parser.error(f"Kwota musi być większa lub równa zero")
+    if args.command == "add" and args.kwota < 0:
+        parser.error(f"Kwota musi być większa od zero")
 
     if args.command == "report" and args.od:
         try:
@@ -205,7 +205,7 @@ def main():
 
     if args.command == "report" and args.do:
         try:
-            parse_date(args.od)
+            parse_date(args.do)
         except ValueError:
             parser.error(f"Format daty '{args.do}' jest zły! Użyj YYYY-MM-DD")
 
