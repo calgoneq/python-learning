@@ -135,9 +135,20 @@ def test_cmd_report_with_no_flags_returns_sorted_transactions(capsys, monkeypatc
 
     assert expected in captured.out
 
-def test_cmd_report_incorrect_data_raises_system_exit(capsys, monkeypatch):
+def test_cmd_report_incorrect_data_raises_system_exit(monkeypatch):
     monkeypatch.setattr("sys.argv", ["budget.py", "report", "--od", "nieprawidłowaData"])
 
+    with pytest.raises(SystemExit) as e:
+        main()
+        
+    assert e.value.code != 0
+
+def test_cmd_report_when_transactions_file_is_corrupted_raises_system_exit(monkeypatch, tmp_path):
+    file = tmp_path / "broken.json"
+    file.write_text("to nie jest JSON", encoding="utf-8")
+    monkeypatch.setattr("budget.TRANSACTIONS_FILE", str(file))
+    monkeypatch.setattr("sys.argv", ["budget.py", "report"])
+    
     with pytest.raises(SystemExit) as e:
         main()
         

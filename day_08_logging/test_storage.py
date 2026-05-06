@@ -1,5 +1,6 @@
 import pytest
 from storage import save_json, load_json, append_transaction, delete_transaction, backup_json
+from exceptions import FileCorruptedError, StorageError, BudgetError
 
 def test_save_json_saves_list_load_json_reads_list(tmp_path):
     file = tmp_path / "test.json"
@@ -17,13 +18,14 @@ def test_load_json_not_existing_file_returns_empty_list(tmp_path):
 
     assert result == []
 
-def test_load_json_corrupted_file_returns_empty_list(tmp_path):
-    file = (tmp_path / "bad.json")
-    file.write_text("to nie jest JSON", encoding="utf-8")
+# old test - no longer supported, error does not create empty list
+# def test_load_json_corrupted_file_returns_empty_list(tmp_path):
+#     file = (tmp_path / "bad.json")
+#     file.write_text("to nie jest JSON", encoding="utf-8")
 
-    result = load_json(file)
+#     result = load_json(file)
 
-    assert result == []
+#     assert result == []
 
 def test_append_transaction_adds_entry(tmp_path):
     file = tmp_path / "temp_data.json"
@@ -133,3 +135,16 @@ def test_backup_json_creates_file_in_backup_dir_and_returns_path(tmp_path):
 
     backup_content = load_json(result)
     assert backup_content == [{"test": "dane"}]
+
+def test_load_json_corrupted_file_raises_file_corrupted_error(tmp_path):
+    file = (tmp_path / "bad.json")
+    file.write_text("to nie jest JSON", encoding="utf-8")
+
+    with pytest.raises(FileCorruptedError):
+        load_json(file)
+
+# test S-new-2 już istnieje -> test_load_json_not_existing_file_returns_empty_list
+
+def test_FileCorruptedError_issubclass_of_StorageError_and_BudgetError():
+    assert issubclass(FileCorruptedError, StorageError)
+    assert issubclass(FileCorruptedError, BudgetError)
