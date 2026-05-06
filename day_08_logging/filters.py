@@ -1,4 +1,7 @@
 from datetime import date, datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def parse_date(data: str) -> date:
     '''Converts string into a datetime.date object.'''
@@ -8,9 +11,9 @@ def parse_date(data: str) -> date:
 
     except ValueError:
         if len(data) == 0:
-            print(f"ERROR: data nie powinna być pusta")
+            logger.warning(f"ERROR: data nie powinna być pusta")
         else: 
-            print(f"ERROR: {data} nie pasuje do formatu, spróbuj YYYY-MM-DD")
+            logger.error(f"ERROR: {data} nie pasuje do formatu, spróbuj YYYY-MM-DD")
 
         raise
 

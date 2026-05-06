@@ -1,7 +1,8 @@
 import pytest
 import shutil
 
-from budget import main, TRANSACTIONS_FILE, HERE
+from config import TRANSACTIONS_FILE, HERE
+from budget import main
 from storage import load_json
 
 def test_cmd_report_prints_raport_with_saldo(capsys, monkeypatch):
