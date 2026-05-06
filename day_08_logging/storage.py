@@ -3,7 +3,11 @@
 import json
 from pathlib import Path
 from datetime import datetime
+import logging
 
+from exceptions import FileCorruptedError
+
+logger = logging.getLogger(__name__)
 HERE = Path(__file__).parent
 
 def load_json(path: Path) -> list[dict]:
@@ -20,12 +24,12 @@ def load_json(path: Path) -> list[dict]:
             return data
 
     except FileNotFoundError:
-        print("ERROR: File not found, new list created!")
+        logger.warning("%s does not exist, new empty list created", path)
         return []
 
-    except json.JSONDecodeError:
-        print(f"ERROR: {path} corrupted, new list created!")
-        return []
+    except json.JSONDecodeError as e:
+        message = f"file {path} is corrupted!"
+        raise FileCorruptedError(message) from e
 
 
 def save_json(data: list[dict], path: Path) -> None:
@@ -56,7 +60,7 @@ def delete_transaction(transaction: dict, path: Path) -> None:
         data.remove(transaction)
         save_json(data, path)
     except ValueError:
-        print(f"ERROR: {transaction} not found, skipping.")
+        logger.warning("%s not found, skipping", transaction)
 
 
 def backup_json(source: Path, backup_dir: Path) -> Path:

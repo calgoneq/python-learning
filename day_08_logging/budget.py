@@ -2,9 +2,13 @@ import argparse
 from datetime import datetime
 import sys
 from pathlib import Path
+import logging
 
 from storage import load_json, backup_json, append_transaction, delete_transaction
 from filters import filter_by_date_range, parse_date, sort_transaction_by_date
+from exceptions import FileCorruptedError
+
+logger = logging.getLogger(__name__)
 
 HERE = Path(__file__).parent
 TRANSACTIONS_FILE = HERE / "transactions.json"
@@ -109,7 +113,11 @@ Saldo startowe: {balance:.2f} zł\n
 
 def cmd_report(args) -> None:
     '''Loads transaction and planned files and prints report. Impure'''
-    transactions = load_json(TRANSACTIONS_FILE)
+    try:
+        transactions = load_json(TRANSACTIONS_FILE)
+    except FileCorruptedError as e:
+        logger.error("Nie można wczytać transakcji: %s", e)
+        args.parser.error(str(e))
     sorted_data = sort_transaction_by_date(transactions)
     filtered_data = filter_by_date_range(sorted_data, args.od, args.do)
     planned = load_json(PLANNED_FILE)
@@ -124,13 +132,22 @@ def cmd_add(args) -> None:
         "kategoria": args.kategoria,
         "data": args.data
     }
-
-    append_transaction(transaction, TRANSACTIONS_FILE)
+    try:
+        append_transaction(transaction, TRANSACTIONS_FILE)
+    except FileCorruptedError as e:
+        logger.error("Nie można wczytać transakcji: %s", e)
+        args.parser.error(str(e))
     print(f"Dodano: {transaction['sklep']} | {transaction['kwota']:.2f} zł | {transaction['kategoria']}")
 
 def cmd_delete(args) -> None:
     '''Removes specified transaction record'''
-    transactions = load_json(TRANSACTIONS_FILE)
+    
+    try:
+        transactions = load_json(TRANSACTIONS_FILE)
+    except FileCorruptedError as e:
+        logger.error("Nie można wczytać transakcji: %s", e)
+        args.parser.error(str(e))
+    
     if len(transactions) == 0:
         print("Brak transakcji do usunięcia.")
         return
@@ -142,7 +159,12 @@ def cmd_delete(args) -> None:
         sys.exit(1)
     
     print(f"Usunięto pozycję {args.index}: {transactions[internal_index]['sklep']} | {transactions[internal_index]['kwota']:.2f} zł")
-    delete_transaction(transactions[internal_index], TRANSACTIONS_FILE)
+    
+    try:
+        delete_transaction(transactions[internal_index], TRANSACTIONS_FILE)
+    except FileCorruptedError as e:
+        logger.error("Nie można wczytać transakcji: %s", e)
+        args.parser.error(str(e))
 
 def cmd_backup(args) -> None:
     '''Tworzy backup danych transakcji'''
@@ -193,6 +215,7 @@ def main():
     category_parser = subparsers.add_parser("categories", help="Prints sums for each category")
 
     args = parser.parse_args()
+    args.parser = parser
 
     if args.command == "add" and args.kwota < 0:
         parser.error(f"Kwota musi być większa od zero")
@@ -213,4 +236,8 @@ def main():
     handler(args)
 
 if __name__ == "__main__":
+    logging.basicConfig(
+        level=logging.DEBUG,
+        format="%(asctime)s | %(name)s | %(levelname)s | %(message)s"
+    )
     main()
