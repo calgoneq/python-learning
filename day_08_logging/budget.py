@@ -7,17 +7,9 @@ import logging
 from storage import load_json, backup_json, append_transaction, delete_transaction
 from filters import filter_by_date_range, parse_date, sort_transaction_by_date
 from exceptions import FileCorruptedError
+from config import HERE, TRANSACTIONS_FILE, PLANNED_FILE, DNI_DANYCH, LINE, LINE_THIN, SALDO
 
 logger = logging.getLogger(__name__)
-
-HERE = Path(__file__).parent
-TRANSACTIONS_FILE = HERE / "transactions.json"
-PLANNED_FILE = HERE / "planned.json"
-
-DNI_DANYCH: int = 3
-LINE = "=" * 40
-LINE_THIN = "-" * 40
-SALDO: float = 3311.0
 
 def sum_by_category(transactions: list[dict]) -> dict[str, float]:
     """Suma kwot per kategoria. Pure."""
@@ -237,7 +229,7 @@ def main():
 
 if __name__ == "__main__":
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.WARNING,
         format="%(asctime)s | %(name)s | %(levelname)s | %(message)s"
     )
     main()

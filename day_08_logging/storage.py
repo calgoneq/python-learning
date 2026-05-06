@@ -6,9 +6,8 @@ from datetime import datetime
 import logging
 
 from exceptions import FileCorruptedError
-
+from config import HERE
 logger = logging.getLogger(__name__)
-HERE = Path(__file__).parent
 
 def load_json(path: Path) -> list[dict]:
     """
