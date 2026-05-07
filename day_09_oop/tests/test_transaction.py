@@ -17,12 +17,14 @@ def test_transaction_class_creates_object_with_correct_data():
 
 def test_transaction_class_handles_price_validation_error():
     sklep: str = "biedronka"
-    kwota: float = -1.1
     kategoria: str = "jedzenie"
     data: str = "2026-05-07"
 
     with pytest.raises(ValidationError):
-        Transaction(sklep, kwota, kategoria, data)
+        Transaction(sklep, -1.1, kategoria, data)
+        
+    with pytest.raises(ValidationError):
+        Transaction(sklep, 0.0, kategoria, data)
 
 def test_transaction_class_handles_data_validation_error():
     sklep: str = "biedronka"

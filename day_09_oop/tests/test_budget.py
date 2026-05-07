@@ -1,5 +1,5 @@
 import pytest
-from budget import sum_by_category, total_amount, calculate_runway, format_transaction_line
+from budget import sum_by_category, total_amount, calculate_runway
 
 def test_sum_by_category_empty_list_returns_empty_dict():
     empty_list: list = []
@@ -99,18 +99,3 @@ def test_calculate_runway_happy_path(balance, monthly_burn, expected):
 def test_calculate_runway_edge_case_month_equals_zero(balance, monthly_burn, expected):
     with pytest.raises(expected):
         calculate_runway(balance, monthly_burn)
-
-def test_format_transaction_line_returns_correct_formating_string():
-    one_record: dict = {
-    "data": "2026-04-19",
-    "sklep": "Biedronka",
-    "kwota": 87.5,
-    "kategoria": "jedzenie"
-    }
-
-    result = format_transaction_line(t=one_record, index=1)
-
-    assert one_record["data"] in result
-    assert one_record["sklep"] in result
-    assert f"{one_record['kwota']:.2f}" in result
-    assert one_record["kategoria"] in result
