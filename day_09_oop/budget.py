@@ -8,6 +8,7 @@ from storage import load_json, backup_json, append_transaction, delete_transacti
 from filters import filter_by_date_range, parse_date, sort_transaction_by_date
 from exceptions import FileCorruptedError
 from config import HERE, TRANSACTIONS_FILE, PLANNED_FILE, DNI_DANYCH, LINE, LINE_THIN, SALDO
+from transaction import Transaction
 
 logger = logging.getLogger(__name__)
 
@@ -41,12 +42,6 @@ def calculate_runway(balance: float, monthly_burn: float) -> int:
         
     return months
 
-def format_transaction_line(t: dict, index: int) -> str:
-    """Jeden rekord transakcji. Pure."""
-    transaction = f"{index:>3}. {t['data']} | {t['sklep']:<10} | {t['kwota']:>7.2f} zł | {t['kategoria']}"
-
-    return transaction
-
 def format_planned_line(p: dict) -> str:
     """Jeden rekod zobowiązań. Pure."""
     planned = f"- {p['opis']:<17} | {p['kwota']:>10.2f} zł | do {p['deadline']}"
@@ -63,8 +58,8 @@ Saldo startowe: {balance:.2f} zł\n
 📋 Transakcje ({len(transactions)}):""")
  
     for i, item in enumerate(transactions, start=1):
-        transaction = format_transaction_line(item, i)
-        print(transaction)
+        transaction = Transaction.from_dict(item)
+        print(f"{i:>3}. {transaction}")
 
     print(f"""{LINE_THIN}\n📊 Podsumowanie kategorii:""")
     
