@@ -1,5 +1,5 @@
 import pytest
-from datetime import datetime, date as d
+from datetime import date as d
 
 from filters import parse_date, filter_by_date_range, sort_transaction_by_date
 
