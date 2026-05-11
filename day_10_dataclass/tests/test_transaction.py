@@ -89,6 +89,6 @@ def test_transaction_dataclass_check_if_two_objects_equal():
     t2 = Transaction(sklep="biedronka", kwota=12.4, kategoria="jedzenie", data="2026-05-04")
     t3 = Transaction(sklep="lidl", kwota=12.4, kategoria="jedzenie", data="2026-05-04")
 
-    assert (t1 == t2) == True
+    assert t1 == t2
 
-    assert (t1 == t3) == False
+    assert t1 != t3
