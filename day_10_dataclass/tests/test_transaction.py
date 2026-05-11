@@ -83,3 +83,12 @@ def test_transaction_class_repr_has_sklep_and_kwota_fields():
     expected: str = "Transaction(sklep='biedronka', kwota=12.4, kategoria='jedzenie', data='2026-05-04')"
 
     assert repr(t) == expected
+
+def test_transaction_dataclass_check_if_two_objects_equal():
+    t1 = Transaction(sklep="biedronka", kwota=12.4, kategoria="jedzenie", data="2026-05-04")
+    t2 = Transaction(sklep="biedronka", kwota=12.4, kategoria="jedzenie", data="2026-05-04")
+    t3 = Transaction(sklep="lidl", kwota=12.4, kategoria="jedzenie", data="2026-05-04")
+
+    assert (t1 == t2) == True
+
+    assert (t1 == t3) == False
