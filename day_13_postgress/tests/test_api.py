@@ -1,7 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 
-import main
 from main import app
 import db
 
@@ -102,8 +101,6 @@ def test_get_transaction_with_incorrect_id_returns_404():
     assert str(transaction_id) in data["detail"]
 
 def test_delete_transaction_removes_and_returns_200():
-    transaction_to_delete: int = 2
-
     transaction_1: dict = {
         "sklep": "domino",
         "kwota": 18.5,
