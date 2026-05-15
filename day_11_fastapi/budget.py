@@ -8,7 +8,7 @@ from storage import load_json, backup_json, append_transaction, delete_transacti
 from filters import filter_by_date_range, parse_date, sort_transaction_by_date
 from exceptions import FileCorruptedError
 from config import HERE, TRANSACTIONS_FILE, PLANNED_FILE, DNI_DANYCH, LINE, LINE_THIN, SALDO
-from transaction import Transaction as t
+from transaction import Transaction
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +58,7 @@ Saldo startowe: {balance:.2f} zł\n
 📋 Transakcje ({len(transactions)}):""")
  
     for i, item in enumerate(transactions, start=1):
-        transaction = t.from_dict(item)
+        transaction = Transaction.from_dict(item)
         print(f"{i:>3}. {transaction}")
 
     print(f"""{LINE_THIN}\n📊 Podsumowanie kategorii:""")

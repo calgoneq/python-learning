@@ -1,7 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from storage import load_json, append_transaction
-from transaction import Transaction as t
+from exceptions import ValidationError
+from transaction import Transaction
 from models import TransactionIn
 from config import TRANSACTIONS_FILE
 
@@ -18,8 +19,10 @@ def get_transactions():
 
 @app.post("/transactions", status_code=201)
 def post_transactions(item: TransactionIn):
-    transaction = t(item.sklep, item.kwota, item.kategoria, item.data)
-    data = transaction.to_dict()
-    append_transaction(data, TRANSACTIONS_FILE)
-    message = f"Dodano: {data['sklep']} | {data['kwota']:.2f} zł | {data['kategoria']}"
-    return message
+    try:
+        transaction = Transaction(item.sklep, item.kwota, item.kategoria, item.data)
+        data = transaction.to_dict()
+        append_transaction(data, TRANSACTIONS_FILE)
+        return {"message": "ok", "transaction": data}
+    except ValidationError as e:
+             raise HTTPException(status_code=422, detail=str(e))
