@@ -38,7 +38,7 @@ def test_post_transaction(sklep, kwota, kategoria, data, expected_status):
     assert response.status_code == expected_status
 
 def test_get_after_new_transaction_returns_correct_json():
-    new_transaction = {
+    new_transaction: dict = {
         "sklep": "test_sklep",
         "kwota": 10.2,
         "kategoria": "test_category",
@@ -53,7 +53,7 @@ def test_get_after_new_transaction_returns_correct_json():
     assert any(t["sklep"] == "test_sklep" for t in data)
 
 def test_get_with_kategoria_parameter_returns_correct_data():
-    new_transactions = {
+    new_transactions: dict = {
         "sklep": "test_sklep",
         "kwota": 10.2,
         "kategoria": "jedzenie",
@@ -92,7 +92,7 @@ def test_get_transaction_with_id_returns_only_transaction_with_correct_id():
     client.post("/transactions", json=transaction_2)
     client.post("/transactions", json=transaction_3)
 
-    transaction_id = 1
+    transaction_id: int = 1
     response = client.get(f"/transactions/{transaction_id}")
     data = response.json()
 
@@ -100,7 +100,7 @@ def test_get_transaction_with_id_returns_only_transaction_with_correct_id():
     assert "zwierzęta" in data["kategoria"]
 
 def test_get_transaction_with_incorrect_id_returns_404():
-    transaction_id = 200
+    transaction_id: int = 200
     response = client.get(f"/transactions/{transaction_id}")
 
     assert response.status_code == 404
@@ -108,7 +108,7 @@ def test_get_transaction_with_incorrect_id_returns_404():
     assert str(transaction_id) in data["detail"]
 
 def test_delete_transaction_removes_and_returns_200():
-    transaction_to_delete = 1
+    transaction_to_delete: int = 2
 
     transaction_1: dict = {
         "sklep": "domino",
