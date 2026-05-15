@@ -3,17 +3,25 @@ from fastapi.testclient import TestClient
 
 import main
 from main import app
+import db
+
+TEST_DB_CONFIG = {
+    "host": "localhost",
+    "port": 5432,
+    "dbname": "budget_test",
+    "user": "calgoneq",
+    "password": ""
+}
 
 client = TestClient(app)
 
 @pytest.fixture(autouse=True)
-def setup_test_db(monkeypatch, tmp_path):
-    d = tmp_path / "test_dir"
-    d.mkdir()
-    test_file = d / "test_transactions.json"
-    test_file.write_text("[]")
-    
-    monkeypatch.setattr(main, "TRANSACTIONS_FILE", str(test_file))
+def setup_test_db(monkeypatch):
+    monkeypatch.setattr(db, "DB_CONFIG", TEST_DB_CONFIG)
+    db.init_db()
+    with db.psycopg2.connect(**TEST_DB_CONFIG) as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("DELETE FROM transactions")
     
 def test_get_transaction():
     response = client.get("/transactions")
@@ -74,30 +82,16 @@ def test_get_transaction_with_id_returns_only_transaction_with_correct_id():
         "data": "2026-02-18",
     }
 
-    transaction_2: dict = {
-        "sklep": "niewiem",
-        "kwota": 28.4,
-        "kategoria": "zwierzęta",
-        "data": "2026-02-15",
-    }
+    post_response = client.post("/transactions", json=transaction_1)
+    created_data = post_response.json()
 
-    transaction_3: dict = {
-        "sklep": "loco",
-        "kwota": 12.7,
-        "kategoria": "ludzie",
-        "data": "2026-02-22",
-    }
-
-    client.post("/transactions", json=transaction_1)
-    client.post("/transactions", json=transaction_2)
-    client.post("/transactions", json=transaction_3)
-
-    transaction_id: int = 1
-    response = client.get(f"/transactions/{transaction_id}")
+    assigned_id = created_data["transaction"]["id"]
+    response = client.get(f"/transactions/{assigned_id}")
     data = response.json()
 
     assert response.status_code == 200
-    assert "zwierzęta" in data["kategoria"]
+    assert assigned_id == data["id"]
+    assert transaction_1["kategoria"] == data["kategoria"]
 
 def test_get_transaction_with_incorrect_id_returns_404():
     transaction_id: int = 200
@@ -117,29 +111,14 @@ def test_delete_transaction_removes_and_returns_200():
         "data": "2026-02-18",
     }
 
-    transaction_2: dict = {
-        "sklep": "niewiem",
-        "kwota": 28.4,
-        "kategoria": "zwierzęta",
-        "data": "2026-02-15",
-    }
-
-    transaction_3: dict = {
-        "sklep": "loco",
-        "kwota": 12.7,
-        "kategoria": "ludzie",
-        "data": "2026-02-22",
-    }
-
-    client.post("/transactions", json=transaction_1)
-    client.post("/transactions", json=transaction_2)
-    client.post("/transactions", json=transaction_3)
+    post_response = client.post("/transactions", json=transaction_1)
+    created_data = post_response.json()
+    assigned_id = created_data["transaction"]["id"]
 
     before_delete = client.get('/transactions')
     before_data = before_delete.json()
 
-    response = client.delete(f"/transactions/{transaction_to_delete}")
-
+    response = client.delete(f"/transactions/{assigned_id}")
     assert response.status_code == 200
 
     after_delete = client.get('/transactions')

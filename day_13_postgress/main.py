@@ -35,8 +35,8 @@ def post_transaction(item: TransactionIn):
     try:
         transaction = Transaction(item.sklep, item.kwota, item.kategoria, item.data)
         data = transaction.to_dict()
-        add_transaction(data)
-        return {"message": "ok", "transaction": data}
+        response = add_transaction(data)
+        return {"message": "ok", "transaction": response}
     except ValidationError as e:
         raise HTTPException(status_code=422, detail=str(e))
 
