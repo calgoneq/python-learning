@@ -45,11 +45,10 @@ def post_transaction(item: TransactionIn):
 def delete_transactions(transaction_id: int):
     transactions = load_json(TRANSACTIONS_FILE)
     
-    for id, item in enumerate(transactions, start=1):
-        if id == transaction_id:
-            print(item)
+    for idx, item in enumerate(transactions):
+        if idx == transaction_id:
             delete_transaction(item, TRANSACTIONS_FILE)
             return {"message": f"Usunięto transakcje o id {transaction_id}"}
         
-        else:
-             return {"message": f"Transakcja od id {transaction_id} nie istnieje"}
+    else:
+        raise HTTPException(status_code=404, detail=f"Transakcja o id {transaction_id} nie istnieje")
