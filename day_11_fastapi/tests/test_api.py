@@ -22,7 +22,8 @@ def test_get_transaction():
 
 @pytest.mark.parametrize("sklep, kwota, kategoria, data, expected_status", [
     ("test_sklep", 10.2, "test_category", "2026-02-12", 201),
-    ("test_sklep_incorrect_kwota", -10.2, "test_category_incorrect_kwota", "2026-02-12", 422)
+    ("test_sklep_incorrect_kwota", -10.2, "test_category_incorrect_kwota", "2026-02-12", 422),
+    ("test_sklep_incorrect_kwota", 10.2, "test_category_incorrect_kwota", "abc", 422)
 ])
 
 def test_post_transaction(sklep, kwota, kategoria, data, expected_status):
