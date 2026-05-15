@@ -11,7 +11,7 @@ async def lifespan(app: FastAPI):
     init_db()
     yield
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def get_status():
@@ -25,10 +25,10 @@ def get_transactions(kategoria: str = None):
 @app.get("/transactions/{transaction_id}")
 def get_transactions_by_id(transaction_id: int):
     transaction = get_transaction_by_id(transaction_id)
-    if transaction == None:
+    if transaction is None:
         raise HTTPException(status_code=404, detail=f"Transakcja o id {transaction_id} nie istnieje")
-    else: 
-        return transaction
+
+    return transaction
 
 @app.post("/transactions", status_code=201)
 def post_transaction(item: TransactionIn):
