@@ -7,9 +7,7 @@ DATABASE_URL = "postgresql://calgoneq@localhost/budget_tracker"
 engine = create_engine(DATABASE_URL)
 
 def init_db() -> None:
-    with Session(engine) as session:
-        Base.metadata.create_all(engine)
-        session.commit()
+    Base.metadata.create_all(engine)
 
 def get_all_transactions(kategoria: str = None) -> list[dict]:
     with Session(engine) as session:
@@ -19,8 +17,6 @@ def get_all_transactions(kategoria: str = None) -> list[dict]:
             rows = session.query(TransactionModel).all()
 
         list_of_dicts: list[dict] = [{"id": item.id, "sklep": item.sklep, "kwota": item.kwota, "kategoria": item.kategoria, "data": item.data} for item in rows]
-        session.commit()
-
         return list_of_dicts
         
 def get_transaction_by_id(transaction_id: int) -> dict | None:
@@ -31,8 +27,6 @@ def get_transaction_by_id(transaction_id: int) -> dict | None:
             return None
         
         response: dict = {"id": row.id, "sklep": row.sklep, "kwota": row.kwota, "kategoria": row.kategoria, "data": row.data}
-        session.commit()
-        
         return response
 
 def add_transaction(transaction: dict) -> dict:
